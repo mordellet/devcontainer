@@ -1,0 +1,21 @@
+{
+  "name": "React-Devcontainer",
+  "dockerFile": "./Dockerfile",
+  "context": ".",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/zsh",
+    "workbench.colorTheme": "Gruvbox Dark"
+  },
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.vscode-typescript-next",
+    "bierner.markdown-preview-github-styles",
+    "davidanson.vscode-markdownlint",
+    "github.copilot",
+    "vscodevim.vim"
+  ],
+  "postCreateCommand": "yarn install && yarn setup",
+  "forwardPorts": [3000],
+  "workspaceFolder": "/workspace/app"
+}
