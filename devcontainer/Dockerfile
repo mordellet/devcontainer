@@ -1,5 +1,5 @@
 # Verwende ein Node.js-Image als Basis (z. B. mit Node 18 und Debian)
-FROM node:18-bullseye
+FROM ubuntu
 
 # Setze Arbeitsverzeichnis
 WORKDIR /workspace
@@ -10,6 +10,11 @@ RUN apt-get update && apt-get install -y \
     curl \
     wget \
     zsh \
+    fzf \
+    fd-find \
+    nodejs \
+    gcc \
+    ripgrep \
     neovim \
     python3-pip \
     build-essential \

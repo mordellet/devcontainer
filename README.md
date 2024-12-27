@@ -1,4 +1,4 @@
-# READMe
+# README
 
 ## Devcontainer for web development
 
