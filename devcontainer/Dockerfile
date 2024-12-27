@@ -18,7 +18,7 @@ RUN apt-get update && apt-get install -y \
     npm \
     gcc \
     ripgrep \
-    lazygit
+    lazygit \
     neovim \
     python3-pip \
     python3-pynvim \
