@@ -4,6 +4,9 @@ FROM ubuntu
 WORKDIR /workspace
 
 # Installiere grundlegende Systemabhängigkeiten
+RUN apt-get install software-properties-common && \
+    add-apt-repository ppa:neovim-ppa/stable
+
 RUN apt-get update && apt-get install -y \
     git \
     curl \
@@ -15,12 +18,14 @@ RUN apt-get update && apt-get install -y \
     npm \
     gcc \
     ripgrep \
+    lazygit
     neovim \
     python3-pip \
     python3-pynvim \
     build-essential \
     libssl-dev \
     openssh-server \
+    sudo \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Konfiguriere OpenSSH-Server
@@ -30,10 +35,14 @@ RUN mkdir /var/run/sshd && \
     echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config && \
     echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config
 
-# Erstelle einen Benutzer für den SSH-Zugriff
+# Erstelle einen Benutzer für den SSH-Zugriff und füge ihn zur sudo-Gruppe hinzu
 RUN useradd -m -s /bin/bash devuser && echo "devuser:devpassword" | chpasswd && \
+    usermod -aG sudo devuser && \
     mkdir -p /home/devuser/.ssh && chmod 700 /home/devuser/.ssh && \
     chown -R devuser:devuser /home/devuser
+
+# Konfiguriere sudo, um keine Passwortabfrage für devuser zu verlangen (optional)
+RUN echo "devuser ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # Installiere oh-my-zsh für den Benutzer
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
