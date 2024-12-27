@@ -14,12 +14,26 @@ RUN apt-get update && apt-get install -y \
     python3-pip \
     build-essential \
     libssl-dev \
+    openssh-server \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Installiere oh-my-zsh für eine aufgeräumte Shell
+# Konfiguriere OpenSSH-Server
+RUN mkdir /var/run/sshd && \
+    echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
+    echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config && \
+    echo 'PubkeyAuthentication yes' >> /etc/ssh/sshd_config && \
+    echo 'AllowTcpForwarding yes' >> /etc/ssh/sshd_config
+
+# Erstelle einen Benutzer für den SSH-Zugriff
+RUN useradd -m -s /bin/bash devuser && echo "devuser:devpassword" | chpasswd && \
+    mkdir -p /home/devuser/.ssh && chmod 700 /home/devuser/.ssh && \
+    chown -R devuser:devuser /home/devuser
+
+# Installiere oh-my-zsh für den Benutzer
 RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended && \
-    chsh -s $(which zsh) && \
-    echo 'ZSH_THEME="agnoster"' > ~/.zshrc
+    chsh -s $(which zsh) devuser && \
+    echo 'ZSH_THEME="agnoster"' > /home/devuser/.zshrc && \
+    chown devuser:devuser /home/devuser/.zshrc
 
 # Installiere Node Version Manager (NVM) und Node.js
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.3/install.sh | bash && \
@@ -60,8 +74,8 @@ RUN npm install -g tailwindcss postcss autoprefixer
 # Installiere Python-Tools für Neovim
 RUN pip3 install --upgrade pynvim
 
-# Exponiere Port (für den Entwicklungsserver)
-EXPOSE 3000
+# Exponiere Ports (SSH und Entwicklungsserver)
+EXPOSE 22 3000
 
-# Standard-Shell
-CMD ["zsh"]
+# Starte den SSH-Dienst und eine interaktive Shell
+CMD ["/usr/sbin/sshd", "-D"]
