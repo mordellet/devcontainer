@@ -1,4 +1,3 @@
-# Verwende ein Node.js-Image als Basis (z. B. mit Node 18 und Debian)
 FROM ubuntu
 
 # Setze Arbeitsverzeichnis
@@ -13,10 +12,12 @@ RUN apt-get update && apt-get install -y \
     fzf \
     fd-find \
     nodejs \
+    npm \
     gcc \
     ripgrep \
     neovim \
     python3-pip \
+    python3-pynvim \
     build-essential \
     libssl-dev \
     openssh-server \
@@ -75,9 +76,6 @@ RUN mkdir -p ~/.config/nvim && \
 
 # Installiere TailwindCSS CLI
 RUN npm install -g tailwindcss postcss autoprefixer
-
-# Installiere Python-Tools für Neovim
-RUN pip3 install --upgrade pynvim
 
 # Exponiere Ports (SSH und Entwicklungsserver)
 EXPOSE 22 3000
